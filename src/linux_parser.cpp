@@ -70,6 +70,7 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
+
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
 
@@ -77,8 +78,9 @@ float LinuxParser::MemoryUtilization() {
   string line;
   string key;
   string value;
-  int MemTotal, MemFree, Buffers, Cached, Shmem, SReclaimable;
-  float Total_used_memory, Non_cache_buffer_memory, Cached_memory;
+  float MemTotal = 0.01; // Initialized to non-zero value to avoid divide by zero in case unable to read the file
+  float MemFree = 0.0;
+  float Total_used_memory = 0.0;
   float memory_util = 0.0;
 
   // Determine the file to be parsed
@@ -91,40 +93,24 @@ float LinuxParser::MemoryUtilization() {
     while (std::getline(filestream, line)) {
 
       // Parse the line by extracting the data needed for the memory utilization formula
-      std::istringstream linestream(line);
       std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
       linestream >> key >> value;
       if (key == "MemTotal") {
-        MemTotal = stoi(value,nullptr,10);
+        MemTotal = stof(value,nullptr);
       }
       else if (key == "MemFree") {
-        MemFree = stoi(value,nullptr,10);
+        MemFree = stof(value,nullptr);
       }
-      else if (key == "Buffers") {
-        Buffers = stoi(value,nullptr,10);
-      }
-      else if (key == "Cached") {
-        Cached = stoi(value,nullptr,10);
-      }
-      else if (key == "Shmem") {
-        Shmem = stoi(value,nullptr,10);
-      }
-      else if (key == "SReclaimable") {
-        SReclaimable = stoi(value,nullptr,10);
-      }
-    }
+    }  // end while
+  }  // end if
 
-    std::cout << MemTotal << " " << MemFree << " " << Buffers << " " << Cached << " " << Shmem << " " << SReclaimable << "\n";
-
-    // Calculate memory utilization
-    Total_used_memory = MemTotal - MemFree;
-    Cached_memory = Cached + SReclaimable - Shmem;
-    Non_cache_buffer_memory = Total_used_memory - (Buffers + Cached_memory);
-    memory_util = (Total_used_memory + Cached_memory + Non_cache_buffer_memory) / MemTotal;
-  }
+  // Calculate memory utilization
+  Total_used_memory = MemTotal - MemFree;
+  memory_util = Total_used_memory / MemTotal;
 
   return memory_util;
-}
+}  // end LinuxParser::MemoryUtilization()
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
