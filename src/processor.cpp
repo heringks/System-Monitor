@@ -15,25 +15,25 @@ float Processor::Utilization() {
     // Calculate the aggregate CPU utilization
 
     // Conver the vector of strings into integer values representing the fields of the cpu line in the /proc/stat file
-    user = stoi(cpu_util_text[0],nullptr,10);
-    nice = stoi(cpu_util_text[1],nullptr,10);
-    system = stoi(cpu_util_text[2],nullptr,10);
-    idle = stoi(cpu_util_text[3],nullptr,10);
-    iowait = stoi(cpu_util_text[4],nullptr,10);
-    irq = stoi(cpu_util_text[5],nullptr,10);
-    softirq = stoi(cpu_util_text[6],nullptr,10);
-    steal = stoi(cpu_util_text[7],nullptr,10);
+    user = stof(cpu_util_text[kUser_],nullptr);
+    nice = stof(cpu_util_text[kNice_],nullptr);
+    system = stof(cpu_util_text[kSystem_],nullptr);
+    idle = stof(cpu_util_text[kIdle_],nullptr);
+    iowait = stof(cpu_util_text[kIOwait_],nullptr);
+    irq = stof(cpu_util_text[kIRQ_],nullptr);
+    softirq = stof(cpu_util_text[kSoftIRQ_],nullptr);
+    steal = stof(cpu_util_text[kSteal_],nullptr);
 
     // Algorithm to calulate CPU utilization
  
-    int PrevIdle = previdle + previowait;
-    int Idle = idle + iowait;
+    float PrevIdle = previdle + previowait;
+    float Idle = idle + iowait;
 
-    int PrevNonIdle = prevuser + prevnice + prevsystem + previrq + prevsoftirq + prevsteal;
-    int NonIdle = user + nice + system + irq + softirq + steal;
+    float PrevNonIdle = prevuser + prevnice + prevsystem + previrq + prevsoftirq + prevsteal;
+    float NonIdle = user + nice + system + irq + softirq + steal;
 
-    int PrevTotal = PrevIdle + PrevNonIdle;
-    int Total = Idle + NonIdle;
+    float PrevTotal = PrevIdle + PrevNonIdle;
+    float Total = Idle + NonIdle;
 
     // differentiate: actual value minus the previous one
     float totald = Total - PrevTotal;

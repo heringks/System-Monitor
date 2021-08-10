@@ -6,13 +6,16 @@
 
 #include "linux_parser.h"
 
-#include <iostream>
-
-using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
 using std::stoi;
+using std::stof;
+using std::stol;
+
+// Global Data
+std::string total_processes = {};
+std::string running_processes = {};
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -70,7 +73,6 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
 
@@ -113,7 +115,28 @@ float LinuxParser::MemoryUtilization() {
 }  // end LinuxParser::MemoryUtilization()
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() { 
+  string uptime_str;
+  string line;
+  long uptime = 0;
+
+  // Determine the file to be parsed
+  std::ifstream stream(kProcDirectory + kUptimeFilename);
+
+  // If able to open the file
+  if (stream.is_open()) {
+
+    // Read the line, get the first value which is the uptime
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> uptime_str;
+
+    // Convert the sting into a long integer
+    uptime = stol(uptime_str,nullptr,10);
+  }
+ 
+  return uptime; 
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -134,9 +157,17 @@ vector<string> LinuxParser::CpuUtilization() {
   string line;
   string number;
   vector<string> cpu_data_agg{};
+
+  // Determine the file to be parsed
   std::ifstream stream(kProcDirectory + kStatFilename);
+
+  // If able to open the file
   if (stream.is_open()) {
+
+    // Read the 1st line of data, which provides the aggregate CPU information
     std::getline(stream, line);
+
+    // Parse the line by extracting the data needed for the CPU utilization formula
     std::istringstream linestream(line);
     linestream >> cpu_txt;
     for (int i = 0; i < 10; i++) {
@@ -144,14 +175,70 @@ vector<string> LinuxParser::CpuUtilization() {
       cpu_data_agg.push_back(number);
     }
   }
-  return cpu_data_agg; 
+
+  // Return the aggregate CPU information
+  return cpu_data_agg;
+
+}  // end LinuxParser::CPUUtilization()
+
+bool LinuxParser::Read_processes_info_from_proc_stat(bool read_processes_info_complete) {
+  string key;
+  string value;
+  string line;
+  bool read_file_success = false;
+
+  // If the /proc/stat file has not already been parsed during this iteration to read the number of processes
+  if (!read_processes_info_complete) {
+
+    // Determine the file to be parsed
+    std::ifstream stream(kProcDirectory + kStatFilename);
+      
+    // If able to open the file
+    if (stream.is_open()) {
+
+      // Read a line of data while there are lines to read
+      while (std::getline(stream, line)) {
+        std::istringstream linestream(line);
+        linestream >> key >> value;
+
+        // Read total number of processes
+        if (key == "processes") {
+          total_processes = value;
+        } // end if
+
+        // Read number of running processes
+        else if (key == "procs_running") {
+          running_processes = value;
+        } // end else if
+      }  // end while
+
+      // Indicate the read of the file was successful
+      read_file_success = true;    
+    } // end if
+  }  //end if
+
+  return read_file_success;
 }
 
 // TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses(bool* read_processes_info_complete){
+
+  // Call the function to parse the /proc/stat file to get the two lines needed for # of processes
+  *read_processes_info_complete = Read_processes_info_from_proc_stat(*read_processes_info_complete);
+
+  // Convert the string into an integer and return  
+  return std::stoi(total_processes,nullptr,10); 
+}
 
 // TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses(bool* read_processes_info_complete) { 
+
+  // Call the function to parse the /proc/stat file to get the two lines needed for # of processes
+  *read_processes_info_complete = Read_processes_info_from_proc_stat(*read_processes_info_complete);
+
+  // Convert the string into an integer and return  
+  return std::stoi(running_processes,nullptr,10); 
+}
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
@@ -171,4 +258,21 @@ string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid[[maybe_unused]]) { 
+  string uptime;
+  string line;
+
+  // Determine the file to be parsed
+  std::ifstream stream(kProcDirectory + kUptimeFilename);
+
+  // If able to open the file
+  if (stream.is_open()) {
+
+    // Read the line, get the first value which is the uptime
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> uptime;
+  }
+ 
+  return stol(uptime,nullptr,10); 
+}
