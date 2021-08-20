@@ -9,6 +9,7 @@
 
 class System {
  public:
+  System ();                          // Constructor
   Processor& Cpu();                   // TODO: See src/system.cpp
   std::vector<Process>& Processes();  // TODO: See src/system.cpp
   float MemoryUtilization();          // TODO: See src/system.cpp
@@ -22,6 +23,15 @@ class System {
  private:
   Processor cpu_ = {};
   std::vector<Process> processes_ = {};
+
+  // A toggle used to ensure that the file containing both the total # of processes and the # of running processes is only parsed once per cycle
+  bool num_processes_read_toggle_ = false;
+
+  // Vector containing all the process IDs
+  std::vector<int> pids_ = {};
+
+  // Number of processes
+  int num_processes_ = 0;
 };
 
 #endif

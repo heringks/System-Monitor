@@ -12,17 +12,17 @@ class Processor {
   float utilization_;
 
   // Previous values of the CPU utilization fields from /proc/stat
-  int prevuser = 0;
-  int prevnice = 0;
-  int prevsystem = 0;
-  int previdle = 0;
-  int previowait = 0;
-  int previrq = 0;
-  int prevsoftirq = 0;
-  int prevsteal = 0;
+  float prevuser = 0;
+  float prevnice = 0;
+  float prevsystem = 0;
+  float previdle = 0;
+  float previowait = 0;
+  float previrq = 0;
+  float prevsoftirq = 0;
+  float prevsteal = 0;
 
   // Current values of the CPU utilization fields from /proc/stat
-  int user, nice, system, idle, iowait, irq, softirq, steal;
+  float user, nice, system, idle, iowait, irq, softirq, steal;
 };
 
 #endif

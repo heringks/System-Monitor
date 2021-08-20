@@ -10,7 +10,6 @@ using std::to_string;
 // OUTPUT: HH:MM:SS
 // REMOVE: [[maybe_unused]] once you define the function
 string Format::ElapsedTime(long seconds) {
-    string uptime_str; 
     string hrs_str = "00";
     string mins_str = "00";
     string secs_str = "00";
@@ -33,6 +32,5 @@ string Format::ElapsedTime(long seconds) {
     }
     else secs_str = to_string(secs);
     
-    uptime_str = string(hrs_str + ":" + mins_str + ":" + secs_str);
-    return uptime_str;
+    return string(hrs_str + ":" + mins_str + ":" + secs_str);
 }
