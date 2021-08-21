@@ -45,6 +45,7 @@ vector<Process>& System::Processes() {
         CPU_util_data = LinuxParser::Get_process_CPU_utilization_data(pids_[i]);
 
         // Compute the CPU utilization of the process
+        // Lines 49 - 52 derived from "Calculation" shown on https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
         total_time = CPU_util_data.utime + CPU_util_data.stime + CPU_util_data.cutime + CPU_util_data.cstime;
         hertz = sysconf(_SC_CLK_TCK);
         seconds = (hertz > k_nom) ? (LinuxParser::UpTime() - (CPU_util_data.starttime / hertz)) : 0.0;

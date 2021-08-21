@@ -25,6 +25,7 @@ float Processor::Utilization() {
     steal = stof(cpu_util_text[kSteal_],nullptr);
 
     // Algorithm to calulate CPU utilization
+    // Lines 30 - 43 derived from https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
  
     float PrevIdle = previdle + previowait;
     float Idle = idle + iowait;
