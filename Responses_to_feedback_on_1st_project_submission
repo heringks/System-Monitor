@@ -5,7 +5,7 @@ src/linux_parser.cpp:
 
 1) Suggestion: YOU CAN ALSO DEFINE SOME GENERIC FUNCTIONS AS WELL AS UTILITY FUNCTIONS WHICH WILL HELP YOU MINIMISE REPETITIVE CODE !
 
-Response: Not going to incorporate: at least the 1st suggested template function would require parsing the file multiple times instead of once in which all the data are retrieved.
+Response: Not incorporated: at least the 1st suggested template function would require parsing the file multiple times instead of once in which all the data are retrieved.
 
 2) Suggestion: I think you should know this: ...
 
@@ -17,6 +17,94 @@ Response: Updated the variable names in LinuxParser::MemoryUtilization to use ca
 
 4) Suggestion: Please close the stream after you are done extracting the value from the file. ...
 
-Response: Thank you for the explanation. Added an additional line the functions in the LinuxParser namespace to close the stream. Added a comment to the functions that were part of the starter code to explain the change I made.
+Response: Thank you for the explanation. Added an additional line the functions in the LinuxParser namespace to close the stream. Added a comment to the functions that 
+were part of the starter code to explain the change I made.
 
-5) 
+5) Suggestion: No, It is fine! You can get rid of them as you are not using these functions!
+
+Response: Deleted the unused functions in LinuxParser I had questioned.
+
+6) Suggestion: It seems you are using it for indentation right? You might want to use Rainbow Bracketts plugin for this. I am sure you are gonna like it!
+
+Response: No change. I don't understand the comment.
+
+7) Suggestion: I understand that you are following the Udacity guidelines and that is why you have extracted value corresponding to the keyword VmSize. ...
+
+Response: Replaced VmSize with VmRSS as requested. However, I should point out that the definition of VmRSS in https://man7.org/linux/man-pages/man5/proc.5.html includes 
+this statement: "This value is inaccurate; see /proc/[pid]/statm above."
+
+8) Suggestion: You are doing a great job by initalizing the variables. This will prevent any garbage values from the memory to be assigned to the variables. 
+Moreover, it helps when debugging.
+
+Response: Thank you, but I think this comment was miscatagorized.
+
+9) Required: Please remove the function if you do not plan to use it!
+
+Response: Function removed
+
+
+src/process.cpp:
+
+1) Suggestion: Here you can make sure that you do not send command more than of 50 characters (or 40 characters - It is your choice).
+You can append ... in the end if the command exceeds more than 40-50 characters and all.
+
+Response: Used the substr function to extract the 1st 40 characters
+
+2) Required: Correct the calculation of process UpTime (paraphrased)
+
+Response: Corrected per guidance given
+
+
+src/system.cpp:
+
+1) You can just use the line using namespace std;
+It will take care of all the std:: that you use as a prefix of many STLs.
+
+Response: ?
+
+2) You should know that you do not need to call the constructor when inserting an element using emplace_back into the vector of a some class if the constructor of the class 
+has an appropriate definition which can be called on that set of argument! ...
+
+Response: ?
+
+3) Suggestion: It would have been nicer if you had defined a separate function for calculating cpu utilisation for the processes!
+
+Response: Created a separate function as suggested.
+
+
+src/processor.cpp:
+
+1) Awesome! Hey! I see you have used float here. ...
+
+Response: I think this comment was miscatagorized. I am assuming it is a suggestion to change from float to double. ?
+
+
+src/format.cpp:
+
+1) and 2) Alterative solutions provided
+
+Response: Thank you for the information, but given how far behind I am in this class now and the extent of your comments, I am going to pass on changing this functions.
+
+
+include/ncurses_diplay.h:
+
+1) I guess you must be knowing that this n corresponds to the number of processes being shown on the process monitor.
+So increasing this or decreasing this value you can control the number of processes for which you want to show on the process monitor.
+
+Response: Yes, I figured that out, but ncurses_display.h is part of the starter code. At one point, I had changed the functionality to display a line for each of the processes,
+but then I changed it back to 10.
+
+
+incdlue/linux_parser.h:
+
+1) Suggestion: You should define the hardcoded value here and then use the same when you will be finding the values related to every entity as follows: ...
+
+Response: I don't understand the comment. The code in question is part of the starter code given to the students.
+
+
+Makefile:
+
+1) Suggestion: I understand that you do not need to make MakeFile in this project but i would recommend you to please go through it! ...
+
+Response: Went through Makefile
+
