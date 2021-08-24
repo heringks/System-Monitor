@@ -1,0 +1,22 @@
+Below are my responses to the code comments received. Only comments requiring or suggesting changes are being addressed below. But, thank you for the positive comments. 
+They made the overall feedback paletable.
+
+src/linux_parser.cpp:
+
+1) Suggestion: YOU CAN ALSO DEFINE SOME GENERIC FUNCTIONS AS WELL AS UTILITY FUNCTIONS WHICH WILL HELP YOU MINIMISE REPETITIVE CODE !
+
+Response: Not going to incorporate: at least the 1st suggested template function would require parsing the file multiple times instead of once in which all the data are retrieved.
+
+2) Suggestion: I think you should know this: ...
+
+Response: I don't understand the suggestion. The code in question is part of the starter code which was provided to the students, not code I wrote or changed.
+
+3) Suggestion: Please follow some convention throughout the code while naming variables! ...
+
+Response: Updated the variable names in LinuxParser::MemoryUtilization to use camelCase
+
+4) Suggestion: Please close the stream after you are done extracting the value from the file. ...
+
+Response: Thank you for the explanation. Added an additional line the functions in the LinuxParser namespace to close the stream. Added a comment to the functions that were part of the starter code to explain the change I made.
+
+5) 
