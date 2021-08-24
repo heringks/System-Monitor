@@ -52,7 +52,9 @@ Response: Used the substr function to extract the 1st 40 characters
 
 2) Required: Correct the calculation of process UpTime (paraphrased)
 
-Response: Corrected per guidance given
+Response: Corrected per guidance given. NOTE: I did not incorporate the "Room for improvement" because I don't know what the equation should be in the case that Starttime
+is expressed in Jiffies instead of clock tics (for Kernel versions < 2.6). Quite frankly, there is not sufficient instruction provided in the Udacity C++ course to figure 
+it out.
 
 
 src/system.cpp:
