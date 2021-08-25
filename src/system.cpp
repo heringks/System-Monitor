@@ -23,8 +23,7 @@ System::System () {
 
     // Construct the processes based on the pids
     for (int i = 0; i < num_processes_; i++) {
-        Process process(pids_[i]);
-        processes_.push_back(process);
+        processes_.emplace_back(pids_[i]);
     }
 }
 
@@ -33,13 +32,31 @@ Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
-    int i;
+
+    // Calculate the CPU utilization of all the processes
+    CalculateProcessesCpuUtilization();
+
+    // Sort the processes based on CPU utilization, from highest to lowest
+    std::sort(processes_.begin(), processes_.end());
+
+    // Update the vector of process IDs to match the sorted order
+    for (int i = 0; i < num_processes_; i++) {
+        pids_[i] = processes_[i].Pid();
+    } // end for
+
+    return processes_; 
+} // end function
+
+void System::CalculateProcessesCpuUtilization() {
     const float k_nom = 0.01; // A nominal value to check in the floating point division to avoid divide by zero
-    float total_time, hertz, seconds, cpu_usage;
+    float total_time;
+    float hertz;
+    float seconds;
+    float cpu_usage;
     LinuxParser::process_CPU_util_data_type CPU_util_data;
 
     // Determine the CPU utilization of all the processes
-    for (i = 0; i < num_processes_; i++) {
+    for (int i = 0; i < num_processes_; i++) {
 
         // Get the CPU utilization data
         CPU_util_data = LinuxParser::Get_process_CPU_utilization_data(pids_[i]);
@@ -56,16 +73,7 @@ vector<Process>& System::Processes() {
         processes_[i].process_CPU_util_data = CPU_util_data;
     } // end for
 
-    // Sort the processes based on CPU utilization, from highest to lowest
-    std::sort(processes_.begin(), processes_.end());
-
-    // Update the vector of process IDs to match the sorted order
-    for (i = 0; i < num_processes_; i++) {
-        pids_[i] = processes_[i].Pid();
-    } // end for
-
-    return processes_; 
-} // end function
+}
 
 // TODO: Return the system's kernel identifier (string)
 std::string System::Kernel() { return LinuxParser::Kernel(); }

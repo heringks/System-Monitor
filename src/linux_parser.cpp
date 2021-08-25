@@ -19,6 +19,8 @@ std::string total_processes = {};
 std::string running_processes = {};
 
 // DONE: An example of how to read data from the filesystem
+// NOTE: This function was fully defined as part of the startup code (i.e. I didn't write it), 
+// but based on feedback from the 1st project submission, I added the line to close the stream.
 string LinuxParser::OperatingSystem() {
   string line;
   string key;
@@ -37,11 +39,16 @@ string LinuxParser::OperatingSystem() {
         }
       }
     }
+
+    // Close the stream
+    filestream.close();   
   }
   return value;
 }
 
 // DONE: An example of how to read data from the filesystem
+// NOTE: This function was fully defined as part of the startup code (i.e. I didn't write it), 
+// but based on feedback from the 1st project submission, I added the line to close the stream.
 string LinuxParser::Kernel() {
   string os, kernel, version;
   string line;
@@ -50,6 +57,9 @@ string LinuxParser::Kernel() {
     std::getline(stream, line);
     std::istringstream linestream(line);
     linestream >> os >> version >> kernel;
+
+    // Close the stream
+    stream.close();
   }
   return kernel;
 }
@@ -81,10 +91,10 @@ float LinuxParser::MemoryUtilization() {
   string line;
   string key;
   string value;
-  float MemTotal = 0.01; // Initialized to non-zero value to avoid divide by zero in case unable to read the file
-  float MemFree = 0.0;
-  float Total_used_memory = 0.0;
-  float memory_util = 0.0;
+  float memTotal = 0.01; // Initialized to non-zero value to avoid divide by zero in case unable to read the file
+  float memFree = 0.0;
+  float totalUsedMemory = 0.0;
+  float memoryUtil = 0.0;
 
   // Determine the file to be parsed
   std::ifstream filestream(kProcDirectory+kMeminfoFilename);
@@ -100,19 +110,22 @@ float LinuxParser::MemoryUtilization() {
       std::istringstream linestream(line);
       linestream >> key >> value;
       if (key == "MemTotal") {
-        MemTotal = stof(value,nullptr);
+        memTotal = stof(value,nullptr);
       }
       else if (key == "MemFree") {
-        MemFree = stof(value,nullptr);
+        memFree = stof(value,nullptr);
       }
     }  // end while
+
+    // Close the stream
+    filestream.close();   
   }  // end if
 
   // Calculate memory utilization
-  Total_used_memory = MemTotal - MemFree;
-  memory_util = Total_used_memory / MemTotal;
+  totalUsedMemory = memTotal - memFree;
+  memoryUtil = totalUsedMemory / memTotal;
 
-  return memory_util;
+  return memoryUtil;
 }  // end function
 
 // TODO: Read and return the system uptime
@@ -134,27 +147,13 @@ long LinuxParser::UpTime() {
 
     // Convert the sting into a long integer
     uptime = stol(uptime_str,nullptr,10);
+
+    // Close the stream
+    stream.close();   
   }
  
   return uptime; 
 }
-
-/* I am not using any of the "Jiffies" functions, but I left them here in case feedback on my project
-** directs otherwise
-*/
-
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
-
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
 
 LinuxParser::process_CPU_util_data_type LinuxParser::Get_process_CPU_utilization_data(int pid) {
   int i = 0;
@@ -197,6 +196,9 @@ LinuxParser::process_CPU_util_data_type LinuxParser::Get_process_CPU_utilization
         process_CPU_util_data.starttime = stof(proc_pid_stat[21],nullptr);
       } // end if
     } // end while
+
+    // Close the stream
+    filestream.close();   
   } // end if
 
   return process_CPU_util_data;
@@ -225,6 +227,9 @@ vector<string> LinuxParser::CpuUtilization() {
       linestream >> number;
       cpu_data_agg.push_back(number);
     } // end for
+
+    // Close the stream
+    stream.close();   
   } // end if
 
   // Return the aggregate CPU information
@@ -264,7 +269,10 @@ bool LinuxParser::Read_processes_info_from_proc_stat(bool read_processes_info_co
       }  // end while
 
       // Indicate the read of the file was successful
-      read_file_success = true;    
+      read_file_success = true;
+
+      // Close the stream
+      filestream.close();   
     } // end if
   }  // end if
 
@@ -296,7 +304,7 @@ int LinuxParser::RunningProcesses(bool* read_processes_info_complete) {
 string LinuxParser::Command(int pid) {
  string line;
  string command = "";
-
+ 
   // Determine the file to be parsed
   std::ifstream filestream(kProcDirectory + to_string(pid) + kCmdlineFilename);
 
@@ -307,6 +315,9 @@ string LinuxParser::Command(int pid) {
     std::getline(filestream, line);
     std::istringstream linestream(line);
     linestream >> command;
+
+    // Close the stream
+    filestream.close();   
   } // end if
 
   return command; 
@@ -330,10 +341,18 @@ string LinuxParser::Ram(int pid) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       linestream >> key >> value;
-      if (key == "VmSize:") {
+
+      // Based on feedback from the 1st project submission, "VmSize:" was replaced with "VmRss:" even though the definition
+      // in https://man7.org/linux/man-pages/man5/proc.5.html states the following: 
+      // "Resident set size.  Note that the value here is the sum of RssAnon, RssFile, and RssShmem.  
+      // This value is inaccurate; see /proc/[pid]/statm above."
+      if (key == "VmRSS:") {
         ram = value;
       } //end if
     } // end while
+
+    // Close the stream
+    filestream.close();   
   } // end if
 
   return ram; 
@@ -361,6 +380,9 @@ string LinuxParser::Uid(int pid) {
         uid = value;
       } //end if
     } // end while
+  
+    // Close the stream
+    filestream.close();
   } // end if
 
   return uid;
@@ -392,13 +414,10 @@ string LinuxParser::User(string uid) {
         user = key;
       } //end if
     } // end while
+
+    // Close the stream
+    filestream.close();   
   } // end if
   
   return user;
 } // end function
-
-// TODO: Read and return the uptime of a process
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { 
-  return 0; 
-}

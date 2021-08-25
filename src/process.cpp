@@ -35,7 +35,8 @@ float Process::CpuUtilization() {
 
 // TODO: Return the command that generated this process
 string Process::Command() {
-    return LinuxParser::Command(pid_);
+    const int k_num_chars = 40;
+    return LinuxParser::Command(pid_).substr(0,k_num_chars);
 }
 
 // TODO: Return this process's memory utilization
@@ -75,7 +76,7 @@ long int Process::UpTime() {
     float hertz = sysconf(_SC_CLK_TCK);
     const float k_nom = 0.01; // A nominal value to check in the floating point division to avoid divide by zero
 
-    float pid_uptime = (hertz > k_nom) ? (process_CPU_util_data.starttime / hertz): 0.0;
+    float pid_uptime = (hertz > k_nom) ? (LinuxParser::UpTime() - process_CPU_util_data.starttime / hertz): 0.0;
     return pid_uptime;
 }
 
