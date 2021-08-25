@@ -62,30 +62,34 @@ src/system.cpp:
 1) You can just use the line using namespace std;
 It will take care of all the std:: that you use as a prefix of many STLs.
 
-Response: ?
+Response: Based on what I read in https://stackoverflow.com/questions/11271889/global-variable-count-ambiguous, I did not change the code. There are not that many occurrences
+of "Std::".
 
 2) You should know that you do not need to call the constructor when inserting an element using emplace_back into the vector of a some class if the constructor of the class 
 has an appropriate definition which can be called on that set of argument! ...
 
-Response: ?
+Response: Updated per comment
 
 3) Suggestion: It would have been nicer if you had defined a separate function for calculating cpu utilisation for the processes!
 
-Response: Created a separate function as suggested.
+Response: Created a separate function as suggested. However, I created it in the System class, not the Process class. Because I am choosing to sort on the processes' 
+CPU utilizations, I need to calculate them all first, which is why I had put the calculation in System::Processes(). I did not want to put the calculation in 
+Process::CpuUtilization and call it from System::Processes, because NcursesDisplay::DisplayProcesses also calls Process::CpuUtilization. So, if I had done it that way, 
+then the CPU utilization of all the processes would have been computed twice each iteration through the loop in NCursesDisplay.
 
 
 src/processor.cpp:
 
 1) Awesome! Hey! I see you have used float here. ...
 
-Response: I think this comment was miscatagorized. I am assuming it is a suggestion to change from float to double. ?
+Response: Ok, thanks for the heads up. I left the code as is, but I will keep this mind for next time.
 
 
 src/format.cpp:
 
 1) and 2) Alterative solutions provided
 
-Response: Thank you for the information, but given how far behind I am in this class now and the extent of your comments, I am going to pass on changing this functions.
+Response: Thank you for the information, but given how far behind I am in this class now and the extent of your comments, I am going to pass on changing this function.
 
 
 include/ncurses_diplay.h:
